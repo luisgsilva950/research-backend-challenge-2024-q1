@@ -1,0 +1,77 @@
+services:
+  api01: &api
+    image: luisgsilva950/panamera_gunicorn
+    container_name: api01
+    environment:
+      - DB_USERNAME=admin
+      - DB_NAME=rinha
+      - DB_PASSWORD=1234
+      - DB_MAX_CONNECTIONS=3
+    depends_on:
+      - postgresdb
+    deploy:
+      resources:
+        limits:
+          cpus: '0.48'
+          memory: '100MB'
+        reservations:
+          cpus: '0.2'
+          memory: '100MB'
+    restart: always
+    networks:
+      - default
+
+  api02:
+    <<: *api
+    container_name: api02
+
+  postgresdb:
+    image: postgres
+    container_name: postgresdb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=rinha
+      - POSTGRES_PASSWORD=1234
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    volumes:
+      - ./sql/script.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+
+    deploy:
+      resources:
+        limits:
+          cpus: '0.34'
+          memory: '220MB'
+        reservations:
+          cpus: '0.2'
+          memory: '220MB'
+    networks:
+      - default
+  nginx:
+    image: nginx
+    container_name: nginx
+    logging:
+      driver: none
+    volumes:
+      - ./config/cnginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 9999:80
+    depends_on:
+      - api01
+      - api02
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '30MB'
+        reservations:
+          cpus: '0.15'
+          memory: '30MB'
+
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+    name: rinha-nginx-2024q1

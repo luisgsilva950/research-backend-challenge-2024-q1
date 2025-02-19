@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "api"
+version = "1.0"
+description = "rinha backend q1 2024"
+authors = ["luisdomingues <luisgsilva950@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+asyncpg = "^0.29.0"
+fastapi = "^0.109.2"
+pytest = "^8.0.0"
+pytest-postgresql = "^5.1.0"
+psycopg2-binary = "^2.9.9"
+psycopg = {extras = ["binary", "pool"], version = "^3.1.18"}
+uvicorn = "^0.27.0.post1"
+async-cache = "^1.1.1"
+orjson = "^3.9.13"
+gunicorn = "^23.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
